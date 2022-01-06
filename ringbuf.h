@@ -170,8 +170,8 @@ ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count);
  * results in an overflow, the value of the ring buffer's tail pointer
  * may be different than it was before the function was called.
  */
-ssize_t
-ringbuf_read(int fd, ringbuf_t rb, size_t count);
+// ssize_t
+// ringbuf_read(int fd, ringbuf_t rb, size_t count);
 
 /*
  * Copy n bytes from the ring buffer src, starting from its tail
@@ -211,8 +211,8 @@ ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count);
  * no bytes are written to the file descriptor, and the function will
  * return 0.
  */
-ssize_t
-ringbuf_write(int fd, ringbuf_t rb, size_t count);
+// ssize_t
+// ringbuf_write(int fd, ringbuf_t rb, size_t count);
 
 /*
  * Copy count bytes from ring buffer src, starting from its tail

@@ -19,9 +19,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#include <unistd.h>
+// #include <unistd.h>
 #include <sys/param.h>
-#include <assert.h>
+// #include <assert.h>
+
+#define assert(X) X
 
 /*
  * The code is written for clarity, not cleverness or performance, and
@@ -229,33 +231,33 @@ ringbuf_memcpy_into(ringbuf_t dst, const void *src, size_t count)
     return dst->head;
 }
 
-ssize_t
-ringbuf_read(int fd, ringbuf_t rb, size_t count)
-{
-    const uint8_t *bufend = ringbuf_end(rb);
-    size_t nfree = ringbuf_bytes_free(rb);
+// ssize_t
+// ringbuf_read(int fd, ringbuf_t rb, size_t count)
+// {
+//     const uint8_t *bufend = ringbuf_end(rb);
+//     size_t nfree = ringbuf_bytes_free(rb);
 
-    /* don't write beyond the end of the buffer */
-    assert(bufend > rb->head);
-    count = MIN(bufend - rb->head, count);
-    ssize_t n = read(fd, rb->head, count);
-    if (n > 0) {
-        assert(rb->head + n <= bufend);
-        rb->head += n;
+//     /* don't write beyond the end of the buffer */
+//     assert(bufend > rb->head);
+//     count = MIN(bufend - rb->head, count);
+//     ssize_t n = read(fd, rb->head, count);
+//     if (n > 0) {
+//         assert(rb->head + n <= bufend);
+//         rb->head += n;
 
-        /* wrap? */
-        if (rb->head == bufend)
-            rb->head = rb->buf;
+//         /* wrap? */
+//         if (rb->head == bufend)
+//             rb->head = rb->buf;
 
-        /* fix up the tail pointer if an overflow occurred */
-        if (n > nfree) {
-            rb->tail = ringbuf_nextp(rb, rb->head);
-            assert(ringbuf_is_full(rb));
-        }
-    }
+//         /* fix up the tail pointer if an overflow occurred */
+//         if (n > nfree) {
+//             rb->tail = ringbuf_nextp(rb, rb->head);
+//             assert(ringbuf_is_full(rb));
+//         }
+//     }
 
-    return n;
-}
+//     return n;
+// }
 
 void *
 ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count)
@@ -283,30 +285,30 @@ ringbuf_memcpy_from(void *dst, ringbuf_t src, size_t count)
     return src->tail;
 }
 
-ssize_t
-ringbuf_write(int fd, ringbuf_t rb, size_t count)
-{
-    size_t bytes_used = ringbuf_bytes_used(rb);
-    if (count > bytes_used)
-        return 0;
+// ssize_t
+// ringbuf_write(int fd, ringbuf_t rb, size_t count)
+// {
+//     size_t bytes_used = ringbuf_bytes_used(rb);
+//     if (count > bytes_used)
+//         return 0;
 
-    const uint8_t *bufend = ringbuf_end(rb);
-    assert(bufend > rb->head);
-    count = MIN(bufend - rb->tail, count);
-    ssize_t n = write(fd, rb->tail, count);
-    if (n > 0) {
-        assert(rb->tail + n <= bufend);
-        rb->tail += n;
+//     const uint8_t *bufend = ringbuf_end(rb);
+//     assert(bufend > rb->head);
+//     count = MIN(bufend - rb->tail, count);
+//     ssize_t n = write(fd, rb->tail, count);
+//     if (n > 0) {
+//         assert(rb->tail + n <= bufend);
+//         rb->tail += n;
 
-        /* wrap? */
-        if (rb->tail == bufend)
-            rb->tail = rb->buf;
+//         /* wrap? */
+//         if (rb->tail == bufend)
+//             rb->tail = rb->buf;
 
-        assert(n + ringbuf_bytes_used(rb) == bytes_used);
-    }
+//         assert(n + ringbuf_bytes_used(rb) == bytes_used);
+//     }
 
-    return n;
-}
+//     return n;
+// }
 
 void *
 ringbuf_copy(ringbuf_t dst, ringbuf_t src, size_t count)
